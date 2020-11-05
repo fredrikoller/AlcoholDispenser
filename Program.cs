@@ -12,40 +12,42 @@ namespace AlcoholDispenser
         {
             var filePath = @"Vikter.txt";
             float bagMaxWeight = 15.0f;
-            int bagCount = 0;
+            int numberOfBags = 0;
 
             List<string> fileContent = FileHandler.ReadFile(filePath);
+            // List<float> listContent = fileContent
+            //                 .Select(x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat))
+            //                 .OrderByDescending(l => l)
+            //                 .ToList();
+
             List<float> listContent = fileContent
-                            .Select(x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat))
-                            .OrderByDescending(l => l)
-                            .ToList();
+                                    .Select(x => float.Parse(x, CultureInfo.InvariantCulture.NumberFormat))
+                                    .ToList();
 
-            float tempBagAmount = 0f;
 
+            float currentWeight = 0f;
+            var totalWeight = listContent.Sum();
+            var tempWeightSum = 0f;
+            System.Console.WriteLine(totalWeight);
             foreach (var item in listContent)
             {
-                // temporary bag is empty
-                if (tempBagAmount == 0f)
+                // bag is empty or current weight + item weight is less than max weight
+                if (currentWeight == 0f || (currentWeight + item) < bagMaxWeight)
                 {
-                    tempBagAmount += item;
-
+                    currentWeight += item;
                 }
-                // temporary bag + item is less than max weight
-                else if ((tempBagAmount + item) < bagMaxWeight)
-                {
-                    tempBagAmount += item;
-                }
-                // temporary bag is full
-                else if (tempBagAmount == bagMaxWeight)
-                {
-                    bagCount++;
-                    tempBagAmount = 0;
+                else {
+                    tempWeightSum += currentWeight;
+                    numberOfBags++;
+                    currentWeight = 0;
                 }
                 
-                System.Console.WriteLine($"TempBagAmount: ${tempBagAmount}");
-
+                Console.WriteLine($"TempBagAmount: {currentWeight}");
+                
             }
-            System.Console.WriteLine($"Amount of bags: ${bagCount}");
+            Console.WriteLine($"Amount of bags: {numberOfBags}");
+            Console.WriteLine($"Temp Weigth Sum: {tempWeightSum}");
+            Console.WriteLine($"Difference: {tempWeightSum - currentWeight}");
         }
     }
 }
